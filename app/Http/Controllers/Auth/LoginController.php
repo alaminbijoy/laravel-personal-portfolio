@@ -42,7 +42,12 @@ class LoginController extends Controller
         if (!$user->e_verified) {
             auth()->logout();
             return back()->with('warning', 'You need to confirm your account. We have sent you an activation code, please check your email.');
+        }elseif ($user->status == 0)
+        {
+            auth()->logout();
+            return back()->with('warning', 'Your account blocked by Admin. For more information please contact with support team.');
         }
+
         return redirect()->intended($this->redirectPath());
     }
 

@@ -23,7 +23,7 @@
                                     <th style="width: 160px">Name</th>
                                     <th>Email</th>
                                     <th>Role</th>
-                                    <th style="width: 80px">Action</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -36,7 +36,6 @@
                                     <td>{{ $user->role->name }}</td>
                                     <td>
                                         <a class="btn btn-primary btn-sm" href="{{ URL::to('/edit-user/'.$user->id) }}">Edit</a>
-                                        <a class="btn btn-danger btn-sm" href="{{ URL::to('/delete-user/'.$user->id) }}">Delete</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -47,7 +46,7 @@
                                 <th style="width: 160px">Name</th>
                                 <th>Email</th>
                                 <th>Role</th>
-                                <th style="width: 80px">Action</th>
+                                <th>Action</th>
                             </tr>
                             </tfoot>
                         </table>
