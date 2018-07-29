@@ -52,6 +52,10 @@ Route::get('/delete-portfolio/{id}', 'AdminController@deletePortfolio')->name('d
 Route::get('/supper-admin/', 'AdminController@supperAdmin')->name('supperAdmin');
 Route::post('/supper-admin-update/', 'AdminController@supperAdminUpdate')->name('supperAdminUpdate');
 
+Route::get('/manage-users/', 'AdminController@manageUsers')->name('manageUsers');
+Route::get('/edit-user/{id}', 'AdminController@editUser')->name('editUser');
+Route::post('/update-user/{id}', 'AdminController@updateUser')->name('updateUser');
+
 Route::get('/add-social-media/', 'AdminController@socialIcon')->name('socialIcon');
 Route::get('/manage-social-media/', 'AdminController@manageSocialMedia')->name('manageSocialMedia');
 Route::get('/edit-social-media/{id}', 'AdminController@editSocialMedia')->name('editSocialMedia');

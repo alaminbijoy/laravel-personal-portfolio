@@ -21,47 +21,33 @@
                                 <tr>
                                     <th style="width: 20px">ID</th>
                                     <th style="width: 160px">Name</th>
-                                    <th>Description</th>
-                                    <th>Portfolios</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
                                     <th style="width: 80px">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            @php $i = 1; @endphp
-                            @foreach($categories as $category)
-                                <tr>
-                                    <td>{{$i++}}</td>
-                                    <td>{{$category->category_name}}</td>
-                                    <td>
-                                        @if(!$category->category_description)
-                                            -
-                                            @else {{$category->category_description}}
 
-                                        @endif
-                                    </td>
+                            @foreach($users as $user)
+                                <tr>
+                                    <td>{{ $user->id }}</td>
+                                    <td>{{ $user->name }}</td>
+                                    <td>{{ $user->email }}</td>
+                                    <td>{{ $user->role->name }}</td>
                                     <td>
-                                        @php $p = 0; @endphp
-                                        @foreach($portfolios as $portfolio)
-                                            @if($portfolio->category_name == $category->id)
-                                                @php $p++; @endphp
-                                            @endif
-                                        @endforeach
-                                        {{ $p }}
-                                    </td>
-                                    <td>
-                                        <a class="btn btn-primary btn-sm" href="{{ URL::to('/edit-category/'.$category->id) }}">Edit</a>
-                                        <a class="btn btn-danger btn-sm" href="{{ URL::to('/delete-category/'.$category->id) }}">Delete</a>
+                                        <a class="btn btn-primary btn-sm" href="{{ URL::to('/edit-user/'.$user->id) }}">Edit</a>
+                                        <a class="btn btn-danger btn-sm" href="{{ URL::to('/delete-user/'.$user->id) }}">Delete</a>
                                     </td>
                                 </tr>
                             @endforeach
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th style="width: 20px">SL.</th>
-                                <th>Category Name</th>
-                                <th>Description</th>
-                                <th>Portfolios</th>
-                                <th>Action</th>
+                                <th style="width: 20px">ID</th>
+                                <th style="width: 160px">Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th style="width: 80px">Action</th>
                             </tr>
                             </tfoot>
                         </table>

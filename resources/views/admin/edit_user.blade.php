@@ -1,7 +1,7 @@
 @extends('admin.layouts.admin_master')
-@section('title', 'Add Post')
-@section('contentHeader', 'Add New Post')
-@section('breadcrumb', 'Post')
+@section('title', 'Add user')
+@section('contentHeader', 'Add New user')
+@section('breadcrumb', 'user')
 
 @section('adminContent')
 
@@ -17,53 +17,43 @@
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form method="POST" action="{{ URL::to('/update-post/'.$edit_post->id) }}" enctype="multipart/form-data">
+                    <form method="post" action="{{ URL::to('/update-user/'.$user->id) }}">
                         @csrf
                         <div class="box-body">
                             <div class="form-group">
-                                <label for="post_title">Title</label>
-                                <input type="text" class="form-control" id="post_title" name="post_title" placeholder="Add post title" value="{{$edit_post->post_title}}">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" name="user_name" placeholder="User Name" value="{{$user->name}}">
                             </div>
-                            <div class="form-group">
-                                <textarea id="editor1" name="post_content" rows="10" cols="80">
-                                    {{$edit_post->post_content}}
-                                </textarea>
-                            </div>
-                            <!-- /.form-group -->
-                            <div class="form-group">
-                                <label>Category</label>
-                                <select class="form-control select2" multiple="multiple" name="category_name[]" data-placeholder="Select a category">
-                                    @foreach($all_category as $category)
-                                        <option @if($edit_post->category_name == $category->id) selected @endif value="{{$category->id}}">{{$category->category_name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
 
-                            <!-- /.form-group -->
                             <div class="form-group">
-                                <label>Post Status</label>
-                                <select class="form-control" name="post_status">
-                                    <option @if($edit_post->post_status == 1)selected="selected" @endif value="1">Publish</option>
-                                    <option @if($edit_post->post_status == 0)selected="selected" @endif value="0">Unpublished</option>
-                                </select>
+                                <label for="user_title">Email</label>
+                                <input type="email" class="form-control" id="email" name="user_email" placeholder="User Email" value="{{$user->email}}">
                             </div>
-                            <!-- /.form-group -->
                             <div class="form-group">
-                                <div class="col-md-6">
-                                    <label for="media_id">File input</label>
-                                    <input type="file" id="media_id" name="media_id">
-
-                                    <p class="help-block">Example block-level help text here.</p>
+                                <label for="user_occupation">Occupation</label>
+                                <input type="text" class="form-control" id="user_occupation" name="user_occupation" placeholder="User occupation" value="{{$user->user_occupation}}">
+                            </div>
+                            <div class="col-md-6">
+                                <!-- /.form-group -->
+                                <div class="form-group">
+                                    <label>User Role</label>
+                                    <select class="form-control" name="user_role" data-placeholder="Select a role">
+                                        @foreach($roles as $role)
+                                            <option @if($user->user_role == $role->id) selected @endif value="{{$role->id}}">{{$role->name}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
-                                <div class="col-md-6">
-                                    @if(!$edit_post->media)
-                                        -
-                                    @else
-                                        <img style="width: 100%; height: auto;" src="{{ asset( $edit_post->media->path . $edit_post->media->image_name ) }}" alt="{{ $edit_post->media->id }}">
-                                    @endif
-                                </div>
+                            </div>
 
+                            <div class="col-md-6">
+                                <!-- /.form-group -->
+                                <div class="form-group">
+                                    <label>User Status</label>
+                                    <select class="form-control" name="status">
+                                        <option @if($user->status == 1)selected="selected" @endif value="1">Approved</option>
+                                        <option @if($user->status == 0)selected="selected" @endif value="0">Block</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <!-- /.box-body -->

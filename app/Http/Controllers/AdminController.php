@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Contact;
 use App\MailSend;
 use App\Portfolio;
+use App\Role;
 use App\Social_Media;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -763,6 +764,67 @@ class AdminController extends Controller
         }
 
         return back()->with('message',  'Delete portfolio information successfully !');
+    }
+
+
+
+    public function manageUsers(){
+
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
+
+            $users = User::all();
+
+            return view('admin.manage_user', compact('users'));
+        }else{
+            return '<h2>Wrong try</h2>';
+        }
+
+    }
+
+    public function updateUser(Request $request, $id)
+    {
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
+
+            $this->validate($request, [
+
+                'user_name' => 'required',
+                'user_email' => 'required',
+                'user_role' => 'required',
+                'status' => 'required',
+
+            ]);
+
+            $user = User::find($id);
+
+            $user->name = $request->user_name;
+            $user->email = $request->user_email;
+            $user->user_occupation = $request->user_occupation;
+            $user->user_role = $request->user_role;
+            $user->status = $request->status;
+
+            $user->save();
+
+            $request->session()->flash('message', 'Update user information successfully!');
+
+            return Redirect::to('/manage-users');
+        }
+
+    }
+
+    public function editUser($id)
+    {
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
+
+            $user = User::find($id);
+            $roles = Role::all();
+            return view('admin.edit_user', compact('user', 'roles'));
+
+        }else{
+            return '<h2>Wrong try</h2>';
+        }
     }
 
 }
