@@ -66,6 +66,8 @@
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     <!-- Messages: style can be found in dropdown.less-->
+
+                    @if(Auth::user()->user_role ===1)
                     <li class="dropdown messages-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <i class="fa fa-envelope-o"></i>
@@ -104,6 +106,9 @@
                             <li class="footer"><a href="{{ route('mailInbox') }}">See All Messages</a></li>
                         </ul>
                     </li>
+
+                    @endif
+
                     <!-- Notifications: style can be found in dropdown.less -->
                     {{--<li class="dropdown notifications-menu">--}}
                         {{--<a href="#" class="dropdown-toggle" data-toggle="dropdown">--}}
@@ -173,7 +178,7 @@
                                 {{--Web Developer--}}
                                 <p>
                                     {{ isset(Auth::user()->name) ? Auth::user()->name : Auth::user()->email }} - {{ isset(Auth::user()->user_occupation) ? Auth::user()->user_occupation : '' }}
-                                    <small>Member since {{ isset(Auth::user()->created_at) ? date('d-M-Y', strtotime(Auth::user()->created_at))  : '' }}</small>
+                                    <small>{{Auth::user()->role->name}} since {{ isset(Auth::user()->created_at) ? date('d-M-Y', strtotime(Auth::user()->created_at))  : '' }}</small>
                                 </p>
                             </li>
                             <!-- Menu Footer-->
@@ -231,6 +236,10 @@
                         <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                     </a>
                 </li>
+
+
+                @if(Auth::user()->user_role ===1)
+
                 <li class="treeview {{ Request::path() == 'supper-admin' ? 'active' : '' }}">
                     <a href="#">
                         <i class="fa fa-book"></i>
@@ -297,6 +306,7 @@
 
                     </a>
                 </li>
+                @endif
 
             </ul>
         </section>
