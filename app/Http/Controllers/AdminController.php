@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Contact;
 use App\MailSend;
+use App\Portfolio;
 use App\Social_Media;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -530,6 +531,177 @@ class AdminController extends Controller
 
     }
 
+    /**
+     * Portfolio
+     * @param Request $request
+     * @return mixed
+     *
+     */
 
+    public function addNewPortfolio()
+    {
+        $all_category = Category::all();
+        return view('admin.add_portfolio', compact('all_category'));
+    }
+
+    public function newPortfolio(Request $request)
+    {
+        $this->validate($request, [
+
+            'portfolio_title' => 'required',
+            'status' => 'required',
+            'media_id' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+
+        ]);
+
+        $user_id = Auth::user()->id;
+        $portfolio = new Portfolio();
+        $image = new Media();
+
+        $category = $request->input('category_name');
+        if ($category){
+            $portfolio_category = implode(',', $category);
+        }
+
+        $portfolio->user_id = $user_id;
+        $portfolio->title = $request->portfolio_title;
+        $portfolio->content = $request->portfolio_content;
+        $portfolio->status = $request->status;
+        $portfolio->category_name = $portfolio_category;
+        $portfolio->tag_id = $request->tag_id;
+
+        $portfolio_image = $request->file('media_id');
+        if ($portfolio_image){
+            $image_name = str_random(20);
+            $extension = $portfolio_image->getClientOriginalExtension();
+            $input_image = $image_name . time() . '.' . $extension;
+            $destinationPath = 'upload/images/';
+            $move = $portfolio_image->move($destinationPath, $input_image);
+
+            if($move){
+
+                // start watermark
+                $img = Image::make($destinationPath . $input_image);
+
+                $img->insert('images/watermark.png', 'top', 100, 100);
+                $img->insert('images/watermark.png', 'bottom', 100, 100);
+                $img->insert('images/watermark.png', 'center');
+
+                $img->save($destinationPath . $input_image); //save created image (will override old image)
+                // end watermark
+
+                $image->image_name = $input_image;
+                $image->path = $destinationPath;
+
+                if($image->save()){
+                    $portfolio->media_id = $image->id;
+                    if($portfolio->save()){
+                        $request->session()->flash('message', 'Save information successfully !');
+                    }
+                }
+            }else{
+                $request->session()->flash('message', 'Upload failed !');
+            }
+        }else{
+            if($portfolio->save()){
+                $request->session()->flash('message', 'Save information successfully !');
+            }
+        }
+        //return Redirect::to('/add-new-portfolio');
+        return back();
+
+    }
+
+
+    public function managePortfolio()
+    {
+        $portfolio_items = Portfolio::all();
+
+        return view('admin.manage_portfolio', compact('portfolio_items'));
+    }
+
+    public function updatePortfolio(Request $request, $id)
+    {
+        $this->validate($request, [
+
+            'portfolio_title' => 'required',
+            'status' => 'required',
+            'media_id' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+
+        ]);
+
+        $user_id = Auth::user()->id;
+        $portfolio = Portfolio::find($id);
+        $image = new Media();
+
+        $portfolio_category = $request->input('category_name');
+        if ($portfolio_category){
+            $portfolio_category = implode(',', $portfolio_category);
+        }
+
+        $portfolio->user_id = $user_id;
+        $portfolio->title = $request->portfolio_title;
+        $portfolio->content = $request->portfolio_content;
+        $portfolio->status = $request->status;
+        $portfolio->category_name = $portfolio_category;
+        $portfolio->tag_id = $request->tag_id;
+
+        $portfolio_image = $request->file('media_id');
+        if ($portfolio_image){
+            $image_name = str_random(20);
+            $extension = $portfolio_image->getClientOriginalExtension();
+            $input_image = $image_name . time() . '.' . $extension;
+            $destinationPath = 'upload/images/';
+            $success = $portfolio_image->move($destinationPath, $input_image);
+
+            if($success){
+
+                // start watermark
+                $img = Image::make($destinationPath . $input_image);
+
+                $img->insert('images/watermark.png', 'top', 100, 100);
+                $img->insert('images/watermark.png', 'bottom', 100, 100);
+                $img->insert('images/watermark.png', 'center');
+
+                $img->save($destinationPath . $input_image); //save created image (will override old image)
+                // end watermark
+
+                $image->image_name = $input_image;
+                $image->path = $destinationPath;
+                if($image->save()){
+                    $portfolio->media_id = $image->id;
+                    if($portfolio->save()){
+                        $request->session()->flash('message', 'Update portfolio information successfully !');
+                    }
+                }
+            }else{
+                $request->session()->flash('message', 'Upload failed !');
+            }
+        }else{
+            if($portfolio->save()){
+                $request->session()->flash('message', 'Update portfolio information successfully !');
+            }
+        }
+        return back();
+
+    }
+
+    public function editPortfolio($id)
+    {
+        $edit_portfolio = Portfolio::find($id);
+        $all_category = Category::all();
+
+        return view('admin.edit_portfolio', compact('edit_portfolio', 'all_category'));
+    }
+
+    public function deletePortfolio(Request $request, $id)
+    {
+        $delete_portfolio = Portfolio::find($id);
+
+        $delete_portfolio->delete();
+
+        return back()->with('message',  'Delete portfolio information successfully !');
+
+    }
 
 }

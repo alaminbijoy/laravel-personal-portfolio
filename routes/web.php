@@ -42,6 +42,13 @@ Route::get('/edit-post/{id}', 'AdminController@editPost')->name('editPost');
 Route::post('/update-post/{id}', 'AdminController@updatePost')->name('updatePost');
 Route::get('/delete-post/{id}', 'AdminController@deletePost')->name('deletePost');
 
+Route::get('/add-new-portfolio', 'AdminController@addNewPortfolio')->name('addNewPortfolio');
+Route::post('/new-portfolio', 'AdminController@newPortfolio')->name('newPortfolio');
+Route::get('/manage-portfolio', 'AdminController@managePortfolio')->name('managePortfolio');
+Route::get('/edit-portfolio/{id}', 'AdminController@editPortfolio')->name('editPortfolio');
+Route::post('/update-portfolio/{id}', 'AdminController@updatePortfolio')->name('updatePortfolio');
+Route::get('/delete-portfolio/{id}', 'AdminController@deletePortfolio')->name('deletePortfolio');
+
 Route::get('/supper-admin/', 'AdminController@supperAdmin')->name('supperAdmin');
 Route::post('/supper-admin-update/', 'AdminController@supperAdminUpdate')->name('supperAdminUpdate');
 

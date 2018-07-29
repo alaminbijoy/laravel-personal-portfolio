@@ -1,5 +1,7 @@
 @extends('layouts.master')
-@section('title', 'Welcome to my website')
+@section('title')
+    {{ isset($sp_admin) ? $sp_admin->name : 'Admin' }} - {{ isset($sp_admin->user_occupation) ? $sp_admin->user_occupation : 'Occupation'}}
+@endsection
 @section('content')
 
     <section class="header-section">
@@ -44,8 +46,8 @@
                 </div>
 
                 <div class="grid">
-                    @foreach($post as $portfolio)
-                        @if($portfolio->post_status == 1)
+                    @foreach($portfolios as $portfolio)
+                        @if($portfolio->status == 1)
                             <div class="mix {{ isset($portfolio->category_name) ? str_replace(' ', '', $portfolio->cat->category_name) : '' }}">
                                 <a class="portfolio-item d-block mx-auto" href="#portfolio-modal-{{$portfolio->id}}">
                                     <span class="image-bg">
@@ -118,8 +120,8 @@
     <!-- End of Contact Section -->
 
     <!-- Portfolio Modals -->
-    @foreach($post as $portfolio)
-        @if($portfolio->post_status == 1)
+    @foreach($portfolios as $portfolio)
+        @if($portfolio->status == 1)
             <div class="portfolio-modal mfp-hide" id="portfolio-modal-{{$portfolio->id}}">
                 <div class="portfolio-modal-dialog bg-white">
                     <div class="close-model">
@@ -129,20 +131,24 @@
                     </div>
                     <div class="container text-center">
                         <div class="row">
-                            <div class="col-md-9">
+                            <div class="col-md-12">
                                 <div class="white-bg">
+                                    <h1 class="portfolio-content-title">{{$portfolio->title}}</h1>
+                                    <hr class="star-dark mb-5">
                                     <img class="img-fluid mb-5 lazy" src="{{$portfolio->media->path . $portfolio->media->image_name}}" alt="{{$portfolio->media->id}}">
+                                    @if($portfolio->content)
+                                        <hr class="star-dark mb-5">
+                                        <div class="portfolio-content">
+                                            <div class="content">
+                                                {!! $portfolio->content !!}
+                                            </div>
+                                        </div>
+                                    @endif
+                                    <hr class="star-dark mb-5">
+                                      <a class="btn btn-primary btn-lg rounded-pill portfolio-modal-dismiss" href="#"><i class="fa fa-close"></i> Close </a>
+                                    <hr class="star-dark mb-5">
                                 </div>
                             </div>
-                            <div class="col-md-3 model-con white-bg">
-                                <h4 class="text-secondary">{{$portfolio->post_title}}</h4>
-                                <hr class="star-dark mb-5">
-                                <div class="content">
-                                    {!! $portfolio->post_content !!}
-                                </div>
-                                <a class="btn btn-primary btn-lg rounded-pill portfolio-modal-dismiss" href="#"><i class="fa fa-close"></i> Close Project</a>
-                            </div>
-
                         </div>
                     </div>
                 </div>

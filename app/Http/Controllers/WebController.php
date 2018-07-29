@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Category;
 use App\Contact;
 use App\Mail\ContactMail;
-use App\Post;
+use App\Portfolio;
 use App\Social_Media;
 use App\User;
 use Illuminate\Http\Request;
@@ -29,9 +29,9 @@ class WebController extends Controller
     public function index()
     {
         $sp_admin = User::find(1);
-        $post = Post::all()->sortByDesc("created_at");
+        $portfolios = Portfolio::all()->sortByDesc("created_at");
         $categorys = Category::all();
-        return view('index', compact('sp_admin', 'post', 'categorys'));
+        return view('index', compact('sp_admin', 'portfolios', 'categorys'));
     }
 
     public function contactSend(Request $request)

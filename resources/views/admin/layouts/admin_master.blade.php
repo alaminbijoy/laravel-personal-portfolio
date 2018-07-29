@@ -245,16 +245,16 @@
                     </ul>
                 </li>
 
-                <li class="treeview {{ Request::path() == 'add-new-post' || Request::path() == 'manage-post' ? 'active' : '' }}">
+                <li class="treeview {{ Request::path() == 'add-new-portfolio' || Request::path() == 'manage-portfolio'  ? 'active' : '' }}">
                     <a href="#">
-                        <i class="fa fa-edit"></i> <span>Post</span>
+                        <i class="fa fa-edit"></i> <span>Portfolio</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li class="{{ Request::path() == 'add-new-post' ? 'active' : '' }}"> <a href="{{ route('addNewPost') }}"><i class="fa fa-circle-o"></i> Add Post</a></li>
-                        <li class="{{ Request::path() == 'manage-post' ? 'active' : '' }}"><a href="{{ route('managePost') }}"><i class="fa fa-circle-o"></i> Manage Post</a></li>
+                        <li class="{{ Request::path() == 'add-new-portfolio' ? 'active' : '' }}"> <a href="{{ route('addNewPortfolio') }}"><i class="fa fa-circle-o"></i> Add Portfolio</a></li>
+                        <li class="{{ Request::path() == 'manage-portfolio' ? 'active' : '' }}"><a href="{{ route('managePortfolio') }}"><i class="fa fa-circle-o"></i> Manage Portfolio</a></li>
                     </ul>
                 </li>
 
