@@ -67,7 +67,7 @@
                 <ul class="nav navbar-nav">
                     <!-- Messages: style can be found in dropdown.less-->
 
-                    @if(Auth::user()->user_role ===1)
+                    @if(Auth::user()->user_role === 1)
                     <li class="dropdown messages-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <i class="fa fa-envelope-o"></i>
@@ -238,7 +238,7 @@
                 </li>
 
 
-                @if(Auth::user()->user_role ===1)
+                @if(Auth::user()->user_role === 1)
 
                 <li class="treeview {{ Request::path() == 'supper-admin' ? 'active' : '' }}">
                     <a href="#">
@@ -256,14 +256,14 @@
 
                 <li class="treeview {{ Request::path() == 'add-new-portfolio' || Request::path() == 'manage-portfolio'  ? 'active' : '' }}">
                     <a href="#">
-                        <i class="fa fa-edit"></i> <span>Portfolio</span>
+                        <i class="fa fa-edit"></i> <span>Portfolios</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
                         <li class="{{ Request::path() == 'add-new-portfolio' ? 'active' : '' }}"> <a href="{{ route('addNewPortfolio') }}"><i class="fa fa-circle-o"></i> Add Portfolio</a></li>
-                        <li class="{{ Request::path() == 'manage-portfolio' ? 'active' : '' }}"><a href="{{ route('managePortfolio') }}"><i class="fa fa-circle-o"></i> Manage Portfolio</a></li>
+                        <li class="{{ Request::path() == 'manage-portfolio' ? 'active' : '' }}"><a href="{{ route('managePortfolio') }}"><i class="fa fa-circle-o"></i> Manage Portfolios</a></li>
                     </ul>
                 </li>
 

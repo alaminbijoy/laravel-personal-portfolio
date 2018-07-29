@@ -61,8 +61,8 @@ class AdminController extends Controller
     public function manageCategory()
     {
         $categories = Category::all();
-        $posts = Post::all();
-        return view('admin.manage_category', compact('categories', 'posts'));
+        $portfolios = Portfolio::all();
+        return view('admin.manage_category', compact('categories', 'portfolios'));
     }
 
     public function socialIcon(){
@@ -147,16 +147,22 @@ class AdminController extends Controller
             'category_name' => 'required',
 
         ]);
-        $user_id = Auth::user()->id;
-        $category = new Category();
 
-        $category->user_id = $user_id;
-        $category->category_name = $request->category_name;
-        $category->category_description = $request->category_description;
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1){
 
-        $category->save();
+            $user_id = Auth::user()->id;
+            $category = new Category();
 
-        $request->session()->flash('message', 'Save Category information successfully !');
+            $category->user_id = $user_id;
+            $category->category_name = $request->category_name;
+            $category->category_description = $request->category_description;
+
+            $category->save();
+
+            $request->session()->flash('message', 'Save Category information successfully !');
+
+        }
         return Redirect::to('/add-new-category');
     }
 
@@ -178,25 +184,33 @@ class AdminController extends Controller
             'category_name' => 'required',
         ]);
 
-        $category = Category::find($id);
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
 
-        $category->category_name = $request->category_name;
-        $category->category_description = $request->category_description;
+            $category = Category::find($id);
 
-        $category->save();
+            $category->category_name = $request->category_name;
+            $category->category_description = $request->category_description;
 
+            $category->save();
 
-        $request->session()->flash('message', 'Update Category information successfully !');
+            $request->session()->flash('message', 'Update Category information successfully !');
+        }
         return Redirect::to('/manage-category');
     }
 
     public function deleteCategory(Request $request, $id)
     {
-        $delete_category = Category::find($id);
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
 
-        $delete_category->delete();
+            $delete_category = Category::find($id);
 
-        $request->session()->flash('message', 'Delete Category information successfully !');
+            $delete_category->delete();
+
+            $request->session()->flash('message', 'Delete Category information successfully !');
+
+        }
         return Redirect::to('/manage-category');
 
     }
@@ -215,57 +229,61 @@ class AdminController extends Controller
 
         ]);
 
-        $user_id = Auth::user()->id;
-        $post = new Post;
-        $image = new Media();
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
 
-        $post_category = $request->input('category_name');
-        if ($post_category){
-            $post_category = implode(',', $post_category);
-        }
+            $user_id = Auth::user()->id;
+            $post = new Post;
+            $image = new Media();
 
-        $post->user_id = $user_id;
-        $post->post_title = $request->post_title;
-        $post->post_content = $request->post_content;
-        $post->post_status = $request->post_status;
-        $post->category_name = $post_category;
-        $post->tag_id = $request->tag_id;
-
-        $post_image = $request->file('media_id');
-        if ($post_image){
-            $image_name = str_random(20);
-            $extension = $post_image->getClientOriginalExtension();
-            $input_image = $image_name . time() . '.' . $extension;
-            $destinationPath = 'upload/images/';
-            $move = $post_image->move($destinationPath, $input_image);
-
-            if($move){
-
-                // start watermark
-                $img = Image::make($destinationPath . $input_image);
-
-                $img->insert('images/watermark.png', 'top', 100, 100);
-                $img->insert('images/watermark.png', 'bottom', 100, 100);
-                $img->insert('images/watermark.png', 'center');
-
-                $img->save($destinationPath . $input_image); //save created image (will override old image)
-                // end watermark
-
-                $image->image_name = $input_image;
-                $image->path = $destinationPath;
-
-                if($image->save()){
-                    $post->media_id = $image->id;
-                    if($post->save()){
-                        $request->session()->flash('message', 'Save post information successfully !');
-                    }
-                }
-            }else{
-                $request->session()->flash('message', 'Upload failed !');
+            $post_category = $request->input('category_name');
+            if ($post_category) {
+                $post_category = implode(',', $post_category);
             }
-        }else{
-            if($post->save()){
-                $request->session()->flash('message', 'Save post information successfully !');
+
+            $post->user_id = $user_id;
+            $post->post_title = $request->post_title;
+            $post->post_content = $request->post_content;
+            $post->post_status = $request->post_status;
+            $post->category_name = $post_category;
+            $post->tag_id = $request->tag_id;
+
+            $post_image = $request->file('media_id');
+            if ($post_image) {
+                $image_name = str_random(20);
+                $extension = $post_image->getClientOriginalExtension();
+                $input_image = $image_name . time() . '.' . $extension;
+                $destinationPath = 'upload/images/';
+                $move = $post_image->move($destinationPath, $input_image);
+
+                if ($move) {
+
+                    // start watermark
+                    $img = Image::make($destinationPath . $input_image);
+
+                    $img->insert('images/watermark.png', 'top', 100, 100);
+                    $img->insert('images/watermark.png', 'bottom', 100, 100);
+                    $img->insert('images/watermark.png', 'center');
+
+                    $img->save($destinationPath . $input_image); //save created image (will override old image)
+                    // end watermark
+
+                    $image->image_name = $input_image;
+                    $image->path = $destinationPath;
+
+                    if ($image->save()) {
+                        $post->media_id = $image->id;
+                        if ($post->save()) {
+                            $request->session()->flash('message', 'Save post information successfully !');
+                        }
+                    }
+                } else {
+                    $request->session()->flash('message', 'Upload failed !');
+                }
+            } else {
+                if ($post->save()) {
+                    $request->session()->flash('message', 'Save post information successfully !');
+                }
             }
         }
         return Redirect::to('/add-new-post');
@@ -297,56 +315,60 @@ class AdminController extends Controller
 
         ]);
 
-        $user_id = Auth::user()->id;
-        $post = Post::find($id);
-        $image = new Media();
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
 
-        $post_category = $request->input('category_name');
-        if ($post_category){
-            $post_category = implode(',', $post_category);
-        }
+            $user_id = Auth::user()->id;
+            $post = Post::find($id);
+            $image = new Media();
 
-        $post->user_id = $user_id;
-        $post->post_title = $request->post_title;
-        $post->post_content = $request->post_content;
-        $post->post_status = $request->post_status;
-        $post->category_name = $post_category;
-        $post->tag_id = $request->tag_id;
-
-        $post_image = $request->file('media_id');
-        if ($post_image){
-            $image_name = str_random(20);
-            $extension = $post_image->getClientOriginalExtension();
-            $input_image = $image_name . time() . '.' . $extension;
-            $destinationPath = 'upload/images/';
-            $success = $post_image->move($destinationPath, $input_image);
-
-            if($success){
-
-                // start watermark
-                $img = Image::make($destinationPath . $input_image);
-
-                $img->insert('images/watermark.png', 'top', 100, 100);
-                $img->insert('images/watermark.png', 'bottom', 100, 100);
-                $img->insert('images/watermark.png', 'center');
-
-                $img->save($destinationPath . $input_image); //save created image (will override old image)
-                // end watermark
-
-                $image->image_name = $input_image;
-                $image->path = $destinationPath;
-                if($image->save()){
-                    $post->media_id = $image->id;
-                    if($post->save()){
-                        $request->session()->flash('message', 'Update post information successfully !');
-                    }
-                }
-            }else{
-                $request->session()->flash('message', 'Upload failed !');
+            $post_category = $request->input('category_name');
+            if ($post_category) {
+                $post_category = implode(',', $post_category);
             }
-        }else{
-            if($post->save()){
-                $request->session()->flash('message', 'Update post information successfully !');
+
+            $post->user_id = $user_id;
+            $post->post_title = $request->post_title;
+            $post->post_content = $request->post_content;
+            $post->post_status = $request->post_status;
+            $post->category_name = $post_category;
+            $post->tag_id = $request->tag_id;
+
+            $post_image = $request->file('media_id');
+            if ($post_image) {
+                $image_name = str_random(20);
+                $extension = $post_image->getClientOriginalExtension();
+                $input_image = $image_name . time() . '.' . $extension;
+                $destinationPath = 'upload/images/';
+                $success = $post_image->move($destinationPath, $input_image);
+
+                if ($success) {
+
+                    // start watermark
+                    $img = Image::make($destinationPath . $input_image);
+
+                    $img->insert('images/watermark.png', 'top', 100, 100);
+                    $img->insert('images/watermark.png', 'bottom', 100, 100);
+                    $img->insert('images/watermark.png', 'center');
+
+                    $img->save($destinationPath . $input_image); //save created image (will override old image)
+                    // end watermark
+
+                    $image->image_name = $input_image;
+                    $image->path = $destinationPath;
+                    if ($image->save()) {
+                        $post->media_id = $image->id;
+                        if ($post->save()) {
+                            $request->session()->flash('message', 'Update post information successfully !');
+                        }
+                    }
+                } else {
+                    $request->session()->flash('message', 'Upload failed !');
+                }
+            } else {
+                if ($post->save()) {
+                    $request->session()->flash('message', 'Update post information successfully !');
+                }
             }
         }
         return Redirect::to('/manage-post');
@@ -355,11 +377,15 @@ class AdminController extends Controller
 
     public function deletePost(Request $request, $id)
     {
-        $delete_post = Post::find($id);
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
 
-        $delete_post->delete();
+            $delete_post = Post::find($id);
 
-        $request->session()->flash('message', 'Delete post information successfully !');
+            $delete_post->delete();
+
+            $request->session()->flash('message', 'Delete post information successfully !');
+        }
         return Redirect::to('/manage-post');
 
     }
@@ -379,38 +405,42 @@ class AdminController extends Controller
 
         ]);
 
-        $sp_admin = User::find(1);
-        $image = new Media();
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
 
-        $sp_admin->name = $request->name;
-        $sp_admin->user_occupation = $request->user_occupation;
-        $sp_admin->email = $request->email;
-        $sp_admin->user_role = $request->user_role;
+            $sp_admin = User::find(1);
+            $image = new Media();
+
+            $sp_admin->name = $request->name;
+            $sp_admin->user_occupation = $request->user_occupation;
+            $sp_admin->email = $request->email;
+            $sp_admin->user_role = $request->user_role;
 
 
-        $post_image = $request->file('media_id');
-        if ($post_image){
-            $input_image = $post_image->getClientOriginalName();
-            $destinationPath = 'upload/images/';
-            $move = $post_image->move($destinationPath, $input_image);
+            $post_image = $request->file('media_id');
+            if ($post_image) {
+                $input_image = $post_image->getClientOriginalName();
+                $destinationPath = 'upload/images/';
+                $move = $post_image->move($destinationPath, $input_image);
 
-            if($move){
+                if ($move) {
 
-                $image->image_name = $input_image;
-                $image->path = $destinationPath;
+                    $image->image_name = $input_image;
+                    $image->path = $destinationPath;
 
-                if($image->save()){
-                    $sp_admin->user_image = $image->id;
-                    if($sp_admin->save()){
-                        $request->session()->flash('message', 'Save information successfully !');
+                    if ($image->save()) {
+                        $sp_admin->user_image = $image->id;
+                        if ($sp_admin->save()) {
+                            $request->session()->flash('message', 'Save information successfully !');
+                        }
                     }
+                } else {
+                    $request->session()->flash('message', 'Upload failed !');
                 }
-            }else{
-                $request->session()->flash('message', 'Upload failed !');
-            }
-        }else{
-            if($sp_admin->save()){
-                $request->session()->flash('message', 'Save information successfully !');
+            } else {
+                if ($sp_admin->save()) {
+                    $request->session()->flash('message', 'Save information successfully !');
+                }
             }
         }
         return Redirect::to('/supper-admin');
@@ -426,36 +456,41 @@ class AdminController extends Controller
             'icon' => 'required',
 
         ]);
-        $social_media = new Social_Media();
-        $image = new Media();
 
-        $social_media->social_media_name = $request->social_media_name;
-        $social_media->social_media_url = $request->social_media_url;
-        $social_media->icon = $request->icon;
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
 
-        $social_media_image = $request->file('media_id');
-        if ($social_media_image){
-            $input_image = $social_media_image->getClientOriginalName();
-            $destinationPath = 'upload/images/';
-            $move = $social_media_image->move($destinationPath, $input_image);
+            $social_media = new Social_Media();
+            $image = new Media();
 
-            if($move){
+            $social_media->social_media_name = $request->social_media_name;
+            $social_media->social_media_url = $request->social_media_url;
+            $social_media->icon = $request->icon;
 
-                $image->image_name = $input_image;
-                $image->path = $destinationPath;
+            $social_media_image = $request->file('media_id');
+            if ($social_media_image) {
+                $input_image = $social_media_image->getClientOriginalName();
+                $destinationPath = 'upload/images/';
+                $move = $social_media_image->move($destinationPath, $input_image);
 
-                if($image->save()){
-                    $social_media->media_id = $image->id;
-                    if($social_media->save()){
-                        $request->session()->flash('message', 'Save social media information successfully !');
+                if ($move) {
+
+                    $image->image_name = $input_image;
+                    $image->path = $destinationPath;
+
+                    if ($image->save()) {
+                        $social_media->media_id = $image->id;
+                        if ($social_media->save()) {
+                            $request->session()->flash('message', 'Save social media information successfully !');
+                        }
                     }
+                } else {
+                    $request->session()->flash('message', 'Upload failed !');
                 }
-            }else{
-                $request->session()->flash('message', 'Upload failed !');
-            }
-        }else{
-            if($social_media->save()){
-                $request->session()->flash('message', 'Save social media information successfully !');
+            } else {
+                if ($social_media->save()) {
+                    $request->session()->flash('message', 'Save social media information successfully !');
+                }
             }
         }
 
@@ -471,45 +506,56 @@ class AdminController extends Controller
             'icon' => 'required',
 
         ]);
-        $social_media = Social_Media::find($id);
-        $image = new Media();
 
-        $social_media->social_media_name = $request->social_media_name;
-        $social_media->social_media_url = $request->social_media_url;
-        $social_media->icon = $request->icon;
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
 
-        $social_media_image = $request->file('media_id');
-        if ($social_media_image){
-            $input_image = $social_media_image->getClientOriginalName();
-            $destinationPath = 'upload/images/';
-            $move = $social_media_image->move($destinationPath, $input_image);
+            $social_media = Social_Media::find($id);
+            $image = new Media();
 
-            if($move){
+            $social_media->social_media_name = $request->social_media_name;
+            $social_media->social_media_url = $request->social_media_url;
+            $social_media->icon = $request->icon;
 
-                $image->image_name = $input_image;
-                $image->path = $destinationPath;
+            $social_media_image = $request->file('media_id');
+            if ($social_media_image) {
+                $input_image = $social_media_image->getClientOriginalName();
+                $destinationPath = 'upload/images/';
+                $move = $social_media_image->move($destinationPath, $input_image);
 
-                if($image->save()){
-                    $social_media->media_id = $image->id;
-                    if($social_media->save()){
-                        $request->session()->flash('message', 'Save social media information successfully !');
+                if ($move) {
+
+                    $image->image_name = $input_image;
+                    $image->path = $destinationPath;
+
+                    if ($image->save()) {
+                        $social_media->media_id = $image->id;
+                        if ($social_media->save()) {
+                            $request->session()->flash('message', 'Save social media information successfully !');
+                        }
                     }
+                } else {
+                    $request->session()->flash('message', 'Upload failed !');
                 }
-            }else{
-                $request->session()->flash('message', 'Upload failed !');
-            }
-        }else{
-            if($social_media->save()){
-                $request->session()->flash('message', 'Save social media information successfully !');
+            } else {
+                if ($social_media->save()) {
+                    $request->session()->flash('message', 'Save social media information successfully !');
+                }
             }
         }
 
         return Redirect::to('/manage-social-media');
     }
     public function deleteSocialMediaImage($id){
-        $social_media = Social_Media::find($id);
-        $social_media->media_id = NULL;
-        $social_media->save();
+
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
+
+            $social_media = Social_Media::find($id);
+            $social_media->media_id = NULL;
+            $social_media->save();
+
+        }
 
         return back()->with('message', 'Removed social media image icon successfully !');
     }
@@ -522,11 +568,15 @@ class AdminController extends Controller
 
     public function deleteSocialMedia(Request $request, $id)
     {
-        $social_media = Social_Media::find($id);
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
 
-        $social_media->delete();
+            $social_media = Social_Media::find($id);
 
-        $request->session()->flash('message', 'Delete social media information successfully !');
+            $social_media->delete();
+
+            $request->session()->flash('message', 'Delete social media information successfully !');
+        }
         return Redirect::to('/manage-social-media');
 
     }
@@ -554,57 +604,61 @@ class AdminController extends Controller
 
         ]);
 
-        $user_id = Auth::user()->id;
-        $portfolio = new Portfolio();
-        $image = new Media();
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
 
-        $category = $request->input('category_name');
-        if ($category){
-            $portfolio_category = implode(',', $category);
-        }
+            $user_id = Auth::user()->id;
+            $portfolio = new Portfolio();
+            $image = new Media();
 
-        $portfolio->user_id = $user_id;
-        $portfolio->title = $request->portfolio_title;
-        $portfolio->content = $request->portfolio_content;
-        $portfolio->status = $request->status;
-        $portfolio->category_name = $portfolio_category;
-        $portfolio->tag_id = $request->tag_id;
-
-        $portfolio_image = $request->file('media_id');
-        if ($portfolio_image){
-            $image_name = str_random(20);
-            $extension = $portfolio_image->getClientOriginalExtension();
-            $input_image = $image_name . time() . '.' . $extension;
-            $destinationPath = 'upload/images/';
-            $move = $portfolio_image->move($destinationPath, $input_image);
-
-            if($move){
-
-                // start watermark
-                $img = Image::make($destinationPath . $input_image);
-
-                $img->insert('images/watermark.png', 'top', 100, 100);
-                $img->insert('images/watermark.png', 'bottom', 100, 100);
-                $img->insert('images/watermark.png', 'center');
-
-                $img->save($destinationPath . $input_image); //save created image (will override old image)
-                // end watermark
-
-                $image->image_name = $input_image;
-                $image->path = $destinationPath;
-
-                if($image->save()){
-                    $portfolio->media_id = $image->id;
-                    if($portfolio->save()){
-                        $request->session()->flash('message', 'Save information successfully !');
-                    }
-                }
-            }else{
-                $request->session()->flash('message', 'Upload failed !');
+            $category = $request->input('category_name');
+            if ($category) {
+                $portfolio_category = implode(',', $category);
             }
-        }else{
-            if($portfolio->save()){
-                $request->session()->flash('message', 'Save information successfully !');
+
+            $portfolio->user_id = $user_id;
+            $portfolio->title = $request->portfolio_title;
+            $portfolio->content = $request->portfolio_content;
+            $portfolio->status = $request->status;
+            $portfolio->category_name = $portfolio_category;
+            $portfolio->tag_id = $request->tag_id;
+
+            $portfolio_image = $request->file('media_id');
+            if ($portfolio_image) {
+                $image_name = str_random(20);
+                $extension = $portfolio_image->getClientOriginalExtension();
+                $input_image = $image_name . time() . '.' . $extension;
+                $destinationPath = 'upload/images/';
+                $move = $portfolio_image->move($destinationPath, $input_image);
+
+                if ($move) {
+
+                    // start watermark
+                    $img = Image::make($destinationPath . $input_image);
+
+                    $img->insert('images/watermark.png', 'top', 100, 100);
+                    $img->insert('images/watermark.png', 'bottom', 100, 100);
+                    $img->insert('images/watermark.png', 'center');
+
+                    $img->save($destinationPath . $input_image); //save created image (will override old image)
+                    // end watermark
+
+                    $image->image_name = $input_image;
+                    $image->path = $destinationPath;
+
+                    if ($image->save()) {
+                        $portfolio->media_id = $image->id;
+                        if ($portfolio->save()) {
+                            $request->session()->flash('message', 'Save information successfully !');
+                        }
+                    }
+                } else {
+                    $request->session()->flash('message', 'Upload failed !');
+                }
+            } else {
+                if ($portfolio->save()) {
+                    $request->session()->flash('message', 'Save information successfully !');
+                }
             }
         }
         //return Redirect::to('/add-new-portfolio');
@@ -630,56 +684,60 @@ class AdminController extends Controller
 
         ]);
 
-        $user_id = Auth::user()->id;
-        $portfolio = Portfolio::find($id);
-        $image = new Media();
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
 
-        $portfolio_category = $request->input('category_name');
-        if ($portfolio_category){
-            $portfolio_category = implode(',', $portfolio_category);
-        }
+            $user_id = Auth::user()->id;
+            $portfolio = Portfolio::find($id);
+            $image = new Media();
 
-        $portfolio->user_id = $user_id;
-        $portfolio->title = $request->portfolio_title;
-        $portfolio->content = $request->portfolio_content;
-        $portfolio->status = $request->status;
-        $portfolio->category_name = $portfolio_category;
-        $portfolio->tag_id = $request->tag_id;
-
-        $portfolio_image = $request->file('media_id');
-        if ($portfolio_image){
-            $image_name = str_random(20);
-            $extension = $portfolio_image->getClientOriginalExtension();
-            $input_image = $image_name . time() . '.' . $extension;
-            $destinationPath = 'upload/images/';
-            $success = $portfolio_image->move($destinationPath, $input_image);
-
-            if($success){
-
-                // start watermark
-                $img = Image::make($destinationPath . $input_image);
-
-                $img->insert('images/watermark.png', 'top', 100, 100);
-                $img->insert('images/watermark.png', 'bottom', 100, 100);
-                $img->insert('images/watermark.png', 'center');
-
-                $img->save($destinationPath . $input_image); //save created image (will override old image)
-                // end watermark
-
-                $image->image_name = $input_image;
-                $image->path = $destinationPath;
-                if($image->save()){
-                    $portfolio->media_id = $image->id;
-                    if($portfolio->save()){
-                        $request->session()->flash('message', 'Update portfolio information successfully !');
-                    }
-                }
-            }else{
-                $request->session()->flash('message', 'Upload failed !');
+            $portfolio_category = $request->input('category_name');
+            if ($portfolio_category) {
+                $portfolio_category = implode(',', $portfolio_category);
             }
-        }else{
-            if($portfolio->save()){
-                $request->session()->flash('message', 'Update portfolio information successfully !');
+
+            $portfolio->user_id = $user_id;
+            $portfolio->title = $request->portfolio_title;
+            $portfolio->content = $request->portfolio_content;
+            $portfolio->status = $request->status;
+            $portfolio->category_name = $portfolio_category;
+            $portfolio->tag_id = $request->tag_id;
+
+            $portfolio_image = $request->file('media_id');
+            if ($portfolio_image) {
+                $image_name = str_random(20);
+                $extension = $portfolio_image->getClientOriginalExtension();
+                $input_image = $image_name . time() . '.' . $extension;
+                $destinationPath = 'upload/images/';
+                $success = $portfolio_image->move($destinationPath, $input_image);
+
+                if ($success) {
+
+                    // start watermark
+                    $img = Image::make($destinationPath . $input_image);
+
+                    $img->insert('images/watermark.png', 'top', 100, 100);
+                    $img->insert('images/watermark.png', 'bottom', 100, 100);
+                    $img->insert('images/watermark.png', 'center');
+
+                    $img->save($destinationPath . $input_image); //save created image (will override old image)
+                    // end watermark
+
+                    $image->image_name = $input_image;
+                    $image->path = $destinationPath;
+                    if ($image->save()) {
+                        $portfolio->media_id = $image->id;
+                        if ($portfolio->save()) {
+                            $request->session()->flash('message', 'Update portfolio information successfully !');
+                        }
+                    }
+                } else {
+                    $request->session()->flash('message', 'Upload failed !');
+                }
+            } else {
+                if ($portfolio->save()) {
+                    $request->session()->flash('message', 'Update portfolio information successfully !');
+                }
             }
         }
         return back();
@@ -696,12 +754,15 @@ class AdminController extends Controller
 
     public function deletePortfolio(Request $request, $id)
     {
-        $delete_portfolio = Portfolio::find($id);
+        $user_role = Auth::user()->user_role;
+        if($user_role === 1) {
 
-        $delete_portfolio->delete();
+            $delete_portfolio = Portfolio::find($id);
+
+            $delete_portfolio->delete();
+        }
 
         return back()->with('message',  'Delete portfolio information successfully !');
-
     }
 
 }

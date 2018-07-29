@@ -22,7 +22,7 @@
                                     <th style="width: 20px">SL.</th>
                                     <th style="width: 160px">Category Name</th>
                                     <th>Description</th>
-                                    <th>Post</th>
+                                    <th>Portfolios</th>
                                     <th style="width: 80px">Action</th>
                                 </tr>
                             </thead>
@@ -41,8 +41,8 @@
                                     </td>
                                     <td>
                                         @php $p = 0; @endphp
-                                        @foreach($posts as $post)
-                                            @if($post->category_name == $category->id)
+                                        @foreach($portfolios as $portfolio)
+                                            @if($portfolio->category_name == $category->id)
                                                 @php $p++; @endphp
                                             @endif
                                         @endforeach
@@ -60,7 +60,7 @@
                                 <th style="width: 20px">SL.</th>
                                 <th>Category Name</th>
                                 <th>Description</th>
-                                <th>Post</th>
+                                <th>Portfolios</th>
                                 <th>Action</th>
                             </tr>
                             </tfoot>
