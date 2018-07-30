@@ -9,6 +9,7 @@ use App\MailSend;
 use App\Portfolio;
 use App\Role;
 use App\Social_Media;
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -32,11 +33,19 @@ class AdminController extends Controller
 
         // Make it available to all views by sharing it
         view()->share(compact('email_notifications', 'count'));
+
     }
+
 
     public function adminDashboard()
     {
-        return view('admin.admin_dashboard');
+        if (Auth::User()->status == 0)
+        {
+            Auth::logout();
+            return redirect()->to('/login')->with('warning', 'Your session has expired because your account is deactivated.');
+        }else{
+            return view('admin.admin_dashboard');
+        }
     }
 
     public function addNewCategory()
@@ -150,7 +159,7 @@ class AdminController extends Controller
         ]);
 
         $user_role = Auth::user()->user_role;
-        if($user_role === 1){
+        if($user_role == 1){
 
             $user_id = Auth::user()->id;
             $category = new Category();
@@ -186,7 +195,7 @@ class AdminController extends Controller
         ]);
 
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $category = Category::find($id);
 
@@ -203,7 +212,7 @@ class AdminController extends Controller
     public function deleteCategory(Request $request, $id)
     {
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $delete_category = Category::find($id);
 
@@ -231,7 +240,7 @@ class AdminController extends Controller
         ]);
 
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $user_id = Auth::user()->id;
             $post = new Post;
@@ -317,7 +326,7 @@ class AdminController extends Controller
         ]);
 
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $user_id = Auth::user()->id;
             $post = Post::find($id);
@@ -379,7 +388,7 @@ class AdminController extends Controller
     public function deletePost(Request $request, $id)
     {
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $delete_post = Post::find($id);
 
@@ -407,7 +416,7 @@ class AdminController extends Controller
         ]);
 
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $sp_admin = User::find(1);
             $image = new Media();
@@ -459,7 +468,7 @@ class AdminController extends Controller
         ]);
 
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $social_media = new Social_Media();
             $image = new Media();
@@ -509,7 +518,7 @@ class AdminController extends Controller
         ]);
 
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $social_media = Social_Media::find($id);
             $image = new Media();
@@ -550,7 +559,7 @@ class AdminController extends Controller
     public function deleteSocialMediaImage($id){
 
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $social_media = Social_Media::find($id);
             $social_media->media_id = NULL;
@@ -570,7 +579,7 @@ class AdminController extends Controller
     public function deleteSocialMedia(Request $request, $id)
     {
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $social_media = Social_Media::find($id);
 
@@ -606,7 +615,7 @@ class AdminController extends Controller
         ]);
 
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $user_id = Auth::user()->id;
             $portfolio = new Portfolio();
@@ -686,7 +695,7 @@ class AdminController extends Controller
         ]);
 
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $user_id = Auth::user()->id;
             $portfolio = Portfolio::find($id);
@@ -756,7 +765,7 @@ class AdminController extends Controller
     public function deletePortfolio(Request $request, $id)
     {
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $delete_portfolio = Portfolio::find($id);
 
@@ -771,7 +780,7 @@ class AdminController extends Controller
     public function manageUsers(){
 
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $users = User::all();
 
@@ -785,7 +794,7 @@ class AdminController extends Controller
     public function updateUser(Request $request, $id)
     {
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $this->validate($request, [
 
@@ -816,7 +825,7 @@ class AdminController extends Controller
     public function editUser($id)
     {
         $user_role = Auth::user()->user_role;
-        if($user_role === 1) {
+        if($user_role == 1) {
 
             $user = User::find($id);
             $roles = Role::all();

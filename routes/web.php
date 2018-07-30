@@ -64,6 +64,7 @@ Route::post('/update-social-media/{id}', 'AdminController@socialMediaUpdate')->n
 Route::get('/delete-social-media/{id}', 'AdminController@deleteSocialMedia')->name('deleteSocialMedia');
 Route::get('/delete-social-media-image/{id}', 'AdminController@deleteSocialMediaImage')->name('deleteSocialMediaImage');
 
+
 Route::get('/mail-inbox/', 'AdminController@mailInbox')->name('mailInbox');
 Route::get('/mail-inbox-read/{id}', 'AdminController@mailInboxRead')->name('mailInboxRead');
 Route::get('/mail-compose/', 'AdminController@mailCompose')->name('mailCompose');

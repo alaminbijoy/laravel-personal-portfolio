@@ -67,7 +67,8 @@
                 <ul class="nav navbar-nav">
                     <!-- Messages: style can be found in dropdown.less-->
 
-                    @if(Auth::user()->user_role === 1)
+                    @if(Auth::user()->user_role == 1)
+
                     <li class="dropdown messages-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <i class="fa fa-envelope-o"></i>
@@ -194,6 +195,7 @@
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
                                     </form>
+
                                 </div>
                             </li>
                         </ul>
@@ -238,7 +240,7 @@
                 </li>
 
 
-                @if(Auth::user()->user_role === 1)
+                @if(Auth::user()->user_role == 1)
 
                 <li class="treeview {{ Request::path() == 'supper-admin' ? 'active' : '' }}">
                     <a href="#">
