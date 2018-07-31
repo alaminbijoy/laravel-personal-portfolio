@@ -33,7 +33,6 @@ class AdminController extends Controller
 
         // Make it available to all views by sharing it
         view()->share(compact('email_notifications', 'count'));
-
     }
 
 
@@ -62,11 +61,7 @@ class AdminController extends Controller
         return view('admin.add_post', compact('all_category'));
     }
 
-    public function supperAdmin()
-    {
-        $sp_admin = User::find(1);
-        return view('admin.supper_admin_profile', compact('sp_admin'));
-    }
+
 
     public function manageCategory()
     {
@@ -404,56 +399,74 @@ class AdminController extends Controller
      * @param Request $request
      * @return mixed
      */
-    public function supperAdminUpdate(Request $request)
+
+    public function userProfile()
+    {
+        $profile = Auth::user();
+        return view('admin.edit_profile', compact('profile'));
+    }
+
+    public function updateProfile(Request $request)
     {
         $this->validate($request, [
 
             'name' => 'required',
-            'email' => 'required',
-            'user_role' => 'required',
             'media_id' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
 
         ]);
 
-        $user_role = Auth::user()->user_role;
-        if($user_role == 1) {
+        $user_profile = Auth::user();
 
-            $sp_admin = User::find(1);
-            $image = new Media();
+        $user_name = str_replace(' ', '', $user_profile->name );
 
-            $sp_admin->name = $request->name;
-            $sp_admin->user_occupation = $request->user_occupation;
-            $sp_admin->email = $request->email;
-            $sp_admin->user_role = $request->user_role;
+        $image = new Media();
 
+        $user_profile->name = $request->name;
+        $user_profile->user_occupation = $request->user_occupation;
 
-            $post_image = $request->file('media_id');
-            if ($post_image) {
-                $input_image = $post_image->getClientOriginalName();
-                $destinationPath = 'upload/images/';
-                $move = $post_image->move($destinationPath, $input_image);
+        $upload_image = $request->file('media_id');
+        if ($upload_image) {
 
-                if ($move) {
+            $image_name = $user_profile->id . '_' . $user_name;
+            $destinationPath = 'upload/images/';
+            $move = $upload_image->move($destinationPath, $image_name);
 
-                    $image->image_name = $input_image;
-                    $image->path = $destinationPath;
+            if ($move) {
 
-                    if ($image->save()) {
-                        $sp_admin->user_image = $image->id;
-                        if ($sp_admin->save()) {
-                            $request->session()->flash('message', 'Save information successfully !');
-                        }
+                $image->image_name = $image_name;
+                $image->path = $destinationPath;
+
+                if ($image->save()) {
+                    $user_profile->user_image = $image->id;
+                    if ($user_profile->save()) {
+                        $request->session()->flash('message', 'Update successfully!');
                     }
-                } else {
-                    $request->session()->flash('message', 'Upload failed !');
                 }
             } else {
-                if ($sp_admin->save()) {
-                    $request->session()->flash('message', 'Save information successfully !');
-                }
+                $request->session()->flash('message', 'Upload failed !');
+            }
+        } else {
+            if ($user_profile->save()) {
+                $request->session()->flash('message', 'Update successfully!');
             }
         }
-        return Redirect::to('/supper-admin');
+
+        return back();
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $this->validate($request, [
+            'password' => 'required|confirmed|min:6',
+        ]);
+
+        $user_profile = Auth::user();
+
+        $user_profile->password = bcrypt($request->password);
+
+        $user_profile->save();
+
+        return back()->with('message', 'Update password successfully!');
 
     }
 

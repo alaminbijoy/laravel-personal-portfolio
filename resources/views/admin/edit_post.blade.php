@@ -54,7 +54,7 @@
                                     <label for="media_id">File input</label>
                                     <input type="file" id="media_id" name="media_id">
 
-                                    <p class="help-block">Example block-level help text here.</p>
+                                    <p class="help-block">Upload post picture</p>
                                 </div>
                                 <div class="col-md-6">
                                     @if(!$edit_post->media)

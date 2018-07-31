@@ -178,14 +178,14 @@
                                 <img src="{{ isset(Auth::user()->user_image) ? asset(Auth::user()->media->path . Auth::user()->media->image_name) : asset('admin_dist/dist/img/avatar5.png') }}" class="img-circle" alt="User Image">
                                 {{--Web Developer--}}
                                 <p>
-                                    {{ isset(Auth::user()->name) ? Auth::user()->name : Auth::user()->email }} - {{ isset(Auth::user()->user_occupation) ? Auth::user()->user_occupation : '' }}
+                                    {{ isset(Auth::user()->name) ? Auth::user()->name : Auth::user()->email }} {{ isset(Auth::user()->user_occupation) ? '- ' . Auth::user()->user_occupation : '' }}
                                     <small>{{Auth::user()->role->name}} since {{ isset(Auth::user()->created_at) ? date('d-M-Y', strtotime(Auth::user()->created_at))  : '' }}</small>
                                 </p>
                             </li>
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-left">
-                                    <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                    <a href="{{ route('userProfile') }}" class="btn btn-default btn-flat">Profile</a>
                                 </div>
                                 <div class="pull-right">
                                     <a class="btn btn-default btn-flat" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -232,29 +232,24 @@
             <!-- /.search form -->
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu" data-widget="tree">
+
                 <li class="header">MAIN NAVIGATION</li>
+
                 <li class="{{ Request::path() == 'dashboard' ? 'active' : '' }}">
                     <a href="{{ route('dashboard') }}">
                         <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                     </a>
                 </li>
 
+                <li class="{{ Request::path() == 'user-profile' ? 'active' : '' }}">
+                    <a href="{{ route('userProfile') }}">
+                        <i class="fa fa-book"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+
 
                 @if(Auth::user()->user_role == 1)
-
-                <li class="treeview {{ Request::path() == 'supper-admin' ? 'active' : '' }}">
-                    <a href="#">
-                        <i class="fa fa-book"></i>
-                        <span>Profiles</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li class="{{ Request::path() == 'supper-admin' ? 'active' : '' }}"><a href="{{ route('supperAdmin') }}"><i class="fa fa-circle-o"></i> Supper Admin</a></li>
-                        <li class="{{ Request::path() == 'profile-edit' ? 'active' : '' }}"><a href=""><i class="fa fa-circle-o"></i> Edit Profile</a></li>
-                    </ul>
-                </li>
 
                 <li class="treeview {{ Request::path() == 'add-new-portfolio' || Request::path() == 'manage-portfolio'  ? 'active' : '' }}">
                     <a href="#">
