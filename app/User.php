@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'user_occupation', 'user_image', 'user_role', 'status', 'e_token',
+        'name', 'email', 'password', 'user_occupation', 'gender', 'date_of_birth', 'phone', 'address', 'country', 'user_image', 'user_role', 'status', 'e_token',
     ];
 
     /**
@@ -33,14 +33,6 @@ class User extends Authenticatable
     public function media(){
         return $this->belongsTo('App\Media' , 'user_image', 'id');
     }
-
-    public function role(){
-        return $this->belongsTo('App\Role' , 'user_role', 'id');
-    }
-
-
-
-
 
 
 

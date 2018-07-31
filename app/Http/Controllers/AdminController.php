@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 
 
 use App\Contact;
+use App\Country;
 use App\MailSend;
 use App\Portfolio;
 use App\Role;
 use App\Social_Media;
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -258,7 +260,7 @@ class AdminController extends Controller
                 $image_name = str_random(20);
                 $extension = $post_image->getClientOriginalExtension();
                 $input_image = $image_name . time() . '.' . $extension;
-                $destinationPath = 'upload/images/';
+                $destinationPath = 'upload/post/' . date('F-y/');
                 $move = $post_image->move($destinationPath, $input_image);
 
                 if ($move) {
@@ -344,7 +346,7 @@ class AdminController extends Controller
                 $image_name = str_random(20);
                 $extension = $post_image->getClientOriginalExtension();
                 $input_image = $image_name . time() . '.' . $extension;
-                $destinationPath = 'upload/images/';
+                $destinationPath = 'upload/post/' . date('F-y/');
                 $success = $post_image->move($destinationPath, $input_image);
 
                 if ($success) {
@@ -423,12 +425,19 @@ class AdminController extends Controller
 
         $user_profile->name = $request->name;
         $user_profile->user_occupation = $request->user_occupation;
+        $user_profile->gender = $request->gender;
+        $user_profile->date_of_birth = $request->date_of_birth;
+        $user_profile->phone = $request->phone;
+        $user_profile->address = $request->address;
+        $user_profile->country = $request->country;
 
         $upload_image = $request->file('media_id');
         if ($upload_image) {
 
-            $image_name = $user_profile->id . '_' . $user_name;
-            $destinationPath = 'upload/images/';
+            $image_code = str_random(4);
+            $extension = $upload_image->getClientOriginalExtension();
+            $image_name = $user_profile->id . '_' . $user_name . '_' . $image_code . '.' . $extension;
+            $destinationPath = 'upload/profile-picture/';
             $move = $upload_image->move($destinationPath, $image_name);
 
             if ($move) {
@@ -468,6 +477,15 @@ class AdminController extends Controller
 
         return back()->with('message', 'Update password successfully!');
 
+    }
+
+    public function deleteProfilePicture()
+    {
+        $user_profile = Auth::user();
+        $user_profile->user_image = NULL;
+        $user_profile->save();
+
+        return back()->with('message', 'Removed profile picture successfully!');
     }
 
     public function addSocialMedia(Request $request)
@@ -651,7 +669,7 @@ class AdminController extends Controller
                 $image_name = str_random(20);
                 $extension = $portfolio_image->getClientOriginalExtension();
                 $input_image = $image_name . time() . '.' . $extension;
-                $destinationPath = 'upload/images/';
+                $destinationPath = 'upload/portfolio/';
                 $move = $portfolio_image->move($destinationPath, $input_image);
 
                 if ($move) {
@@ -731,7 +749,7 @@ class AdminController extends Controller
                 $image_name = str_random(20);
                 $extension = $portfolio_image->getClientOriginalExtension();
                 $input_image = $image_name . time() . '.' . $extension;
-                $destinationPath = 'upload/images/';
+                $destinationPath = 'upload/portfolio/';
                 $success = $portfolio_image->move($destinationPath, $input_image);
 
                 if ($success) {
@@ -811,7 +829,6 @@ class AdminController extends Controller
 
             $this->validate($request, [
 
-                'user_name' => 'required',
                 'user_email' => 'required',
                 'user_role' => 'required',
                 'status' => 'required',
@@ -820,9 +837,7 @@ class AdminController extends Controller
 
             $user = User::find($id);
 
-            $user->name = $request->user_name;
             $user->email = $request->user_email;
-            $user->user_occupation = $request->user_occupation;
             $user->user_role = $request->user_role;
             $user->status = $request->status;
 
@@ -841,12 +856,31 @@ class AdminController extends Controller
         if($user_role == 1) {
 
             $user = User::find($id);
-            $roles = Role::all();
-            return view('admin.edit_user', compact('user', 'roles'));
+            return view('admin.edit_user', compact('user'));
 
         }else{
             return '<h2>Wrong try</h2>';
         }
+    }
+
+    public function updateUserPassword(Request $request, $id)
+    {
+        $this->validate($request, [
+            'password' => 'required|confirmed|min:6',
+        ]);
+
+        $user_role = Auth::user()->user_role;
+        if($user_role == 1) {
+
+            $user_profile = User::find($id);
+
+            $user_profile->password = bcrypt($request->password);
+
+            $user_profile->save();
+
+            return back()->with('message', 'Update password successfully!');
+        }
+
     }
 
 }

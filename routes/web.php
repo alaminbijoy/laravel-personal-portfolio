@@ -52,10 +52,12 @@ Route::get('/delete-portfolio/{id}', 'AdminController@deletePortfolio')->name('d
 Route::get('/user-profile', 'AdminController@userProfile')->name('userProfile');
 Route::post('/update-user-profile', 'AdminController@updateProfile')->name('updateProfile');
 Route::post('/update-password', 'AdminController@updatePassword')->name('updatePassword');
+Route::get('/delete-profile-picture', 'AdminController@deleteProfilePicture')->name('deleteProfilePicture');
 
 Route::get('/manage-users/', 'AdminController@manageUsers')->name('manageUsers');
-Route::get('/edit-user/{id}', 'AdminController@editUser')->name('editUser');
-Route::post('/update-user/{id}', 'AdminController@updateUser')->name('updateUser');
+Route::get('/edit-user-{id}', 'AdminController@editUser')->name('editUser');
+Route::post('/update-user-{id}', 'AdminController@updateUser')->name('updateUser');
+Route::post('/update-user-password/{id}', 'AdminController@updateUserPassword')->name('updateUserPassword');
 
 Route::get('/add-social-media/', 'AdminController@socialIcon')->name('socialIcon');
 Route::get('/manage-social-media/', 'AdminController@manageSocialMedia')->name('manageSocialMedia');

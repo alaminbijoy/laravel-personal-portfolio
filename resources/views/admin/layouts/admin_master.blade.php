@@ -179,7 +179,7 @@
                                 {{--Web Developer--}}
                                 <p>
                                     {{ isset(Auth::user()->name) ? Auth::user()->name : Auth::user()->email }} {{ isset(Auth::user()->user_occupation) ? '- ' . Auth::user()->user_occupation : '' }}
-                                    <small>{{Auth::user()->role->name}} since {{ isset(Auth::user()->created_at) ? date('d-M-Y', strtotime(Auth::user()->created_at))  : '' }}</small>
+                                    <small>{{ Auth::user()->user_role == 1 ? 'Admin' : 'Member' }} since {{ isset(Auth::user()->created_at) ? date('d-M-Y', strtotime(Auth::user()->created_at))  : '' }}</small>
                                 </p>
                             </li>
                             <!-- Menu Footer-->

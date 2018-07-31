@@ -33,9 +33,9 @@
                                     <td>{{ $user->id }}</td>
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
-                                    <td>{{ $user->role->name }}</td>
+                                    <td>{{ $user->user_role == 1 ? 'Admin' : 'Member' }}</td>
                                     <td>
-                                        <a class="btn btn-primary btn-sm" href="{{ URL::to('/edit-user/'.$user->id) }}">Edit</a>
+                                        <a class="btn btn-primary btn-sm" href="{{ URL::to('/edit-user-'.$user->id) }}">Edit</a>
                                     </td>
                                 </tr>
                             @endforeach
